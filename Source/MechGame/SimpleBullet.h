@@ -13,7 +13,7 @@ class MECHGAME_API ASimpleBullet : public AActor
 
 	/** Sphere collision component */
 	UPROPERTY(EditDefaultsOnly, Category = "ProjectileKinetic")
-	class UCapsuleComponent* CollisionComp;
+	class UBoxComponent* CollisionComp;
 
 	/** Visible mesh of bullet */
 	UPROPERTY(EditAnywhere)
@@ -32,7 +32,7 @@ public:
 	void OnHit(UPrimitiveComponent* HitComp, AActor* OtherActor, UPrimitiveComponent* OtherComp, FVector NormalImpulse, const FHitResult& Hit);
 
 	/** Returns CollisionComp subobject **/
-	FORCEINLINE class UCapsuleComponent* GetCollisionComp() const { return CollisionComp; }
+	FORCEINLINE class UBoxComponent* GetCollisionComp() const { return CollisionComp; }
 
 	/** Returns ProjectileMovement subobject **/
 	FORCEINLINE class UProjectileMovementComponent* GetProjectileMovement() const { return ProjectileMovement; }
