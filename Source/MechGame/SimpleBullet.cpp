@@ -2,15 +2,14 @@
 
 
 #include "SimpleBullet.h"
-#include "Components/SphereComponent.h"
+#include "Components/CapsuleComponent.h"
 #include "GameFramework/ProjectileMovementComponent.h"
 
 // Sets default values
 ASimpleBullet::ASimpleBullet()
 {
  	//Use a sphere as simple collision representation
-	CollisionComp = CreateDefaultSubobject<USphereComponent>(TEXT("SphereComp"));
-	//CollisionComp->InitSphereRadius(5.0f);
+	CollisionComp = CreateDefaultSubobject<UCapsuleComponent>(TEXT("Capsule Collision"));
 	CollisionComp->BodyInstance.SetCollisionProfileName("ProjectileKinetic");
 
 	// Players can't walk on it
@@ -23,7 +22,6 @@ ASimpleBullet::ASimpleBullet()
 	//Mesh visible to player
 	VisibleMesh = CreateDefaultSubobject<UStaticMeshComponent>(TEXT("VisibleBulletMesh"));
 	VisibleMesh->AttachToComponent(RootComponent, FAttachmentTransformRules::KeepRelativeTransform);
-	
 
 	// Use a ProjectileMovementComponent to govern this projectile's movement
 	ProjectileMovement = CreateDefaultSubobject<UProjectileMovementComponent>(TEXT("ProjectileComp"));
@@ -31,7 +29,7 @@ ASimpleBullet::ASimpleBullet()
 	ProjectileMovement->InitialSpeed = 500.f;
 	ProjectileMovement->MaxSpeed = 3000.f;
 	ProjectileMovement->bRotationFollowsVelocity = true;
-	ProjectileMovement->bShouldBounce = true;
+	ProjectileMovement->bShouldBounce = false;
 
 	// Die after 3 seconds by default
 	//UPROPERTY(EditAnywhere)
