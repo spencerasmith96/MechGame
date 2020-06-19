@@ -13,6 +13,7 @@ ASimpleBullet::ASimpleBullet()
  	//Use a box as simple collision representation
 	CollisionComp = CreateDefaultSubobject<UBoxComponent>(TEXT("Box Collision"));
 	CollisionComp->BodyInstance.SetCollisionProfileName("ProjectileKinetic");
+	CollisionComp->OnComponentHit.AddDynamic(this, &ASimpleBullet::OnHit);
 
 	// Players can't walk on it
 	CollisionComp->SetWalkableSlopeOverride(FWalkableSlopeOverride(WalkableSlope_Unwalkable, 0.f));
@@ -24,6 +25,23 @@ ASimpleBullet::ASimpleBullet()
 	//Mesh visible to player
 	VisibleMesh = CreateDefaultSubobject<UStaticMeshComponent>(TEXT("VisibleBulletMesh"));
 	VisibleMesh->AttachToComponent(CollisionComp, FAttachmentTransformRules::KeepRelativeTransform);
+	VisibleMesh->SetCollisionEnabled(ECollisionEnabled::NoCollision);
+
+	// If found, uses bullet mesh by default
+	static ConstructorHelpers::FObjectFinder<UStaticMesh> BulletMeshAsset(TEXT("StaticMesh'/Game/CustomContent/Projectiles/BulletMesh.BulletMesh'"));
+	if (BulletMeshAsset.Succeeded())
+	{
+		VisibleMesh->SetStaticMesh(BulletMeshAsset.Object);
+		VisibleMesh->AddLocalRotation(FRotator(270.f, 0.f, 0.f));
+
+		//Adjusts collision box to fit
+		FVector BulletMinBound, BulletMaxBound;
+		VisibleMesh->GetLocalBounds(BulletMinBound, BulletMaxBound);
+		FVector NewBoxDimensions = BulletMaxBound.ComponentMax(BulletMinBound.GetAbs());
+		NewBoxDimensions.Set(NewBoxDimensions.Z, NewBoxDimensions.Y, NewBoxDimensions.X);
+
+		CollisionComp->SetBoxExtent(NewBoxDimensions);
+	}
 
 	// Use a ProjectileMovementComponent to govern this projectile's movement
 	ProjectileMovement = CreateDefaultSubobject<UProjectileMovementComponent>(TEXT("ProjectileComp"));
@@ -32,22 +50,6 @@ ASimpleBullet::ASimpleBullet()
 	ProjectileMovement->MaxSpeed = 3000.f;
 	ProjectileMovement->bRotationFollowsVelocity = true;
 	ProjectileMovement->bShouldBounce = true;
-
-	// If found, uses bullet mesh by default
-	static ConstructorHelpers::FObjectFinder<UStaticMesh> BulletMeshAsset(TEXT("StaticMesh'/Game/CustomContent/Projectiles/BulletMesh.BulletMesh'"));
-	if (BulletMeshAsset.Succeeded())
-	{
-		VisibleMesh->SetStaticMesh(BulletMeshAsset.Object);
-		VisibleMesh->AddLocalRotation(FRotator(270.f, 0.f, 0.f));
-		
-		//Adjusts collision box to fit
-		FVector BulletMinBound, BulletMaxBound;
-		VisibleMesh->GetLocalBounds(BulletMinBound, BulletMaxBound);
-		FVector NewBoxDimensions = BulletMaxBound.ComponentMax(BulletMinBound.GetAbs());
-		NewBoxDimensions.Set(NewBoxDimensions.Z, NewBoxDimensions.Y, NewBoxDimensions.X);
-		
-		CollisionComp->SetBoxExtent(NewBoxDimensions);
-	}
 
 	// Die after 3 seconds by default
 	//UPROPERTY(EditAnywhere)
