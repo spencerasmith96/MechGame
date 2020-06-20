@@ -2,13 +2,64 @@
 
 
 #include "SimpleBullet.h"
+#include "Components/CapsuleComponent.h"
+#include "Components/BoxComponent.h"
+#include "GameFramework/ProjectileMovementComponent.h"
+#include "Uobject/ConstructorHelpers.h"
 
 // Sets default values
 ASimpleBullet::ASimpleBullet()
 {
- 	// Set this actor to call Tick() every frame.  You can turn this off to improve performance if you don't need it.
-	PrimaryActorTick.bCanEverTick = true;
+ 	//Use a box as simple collision representation
+	CollisionComp = CreateDefaultSubobject<UBoxComponent>(TEXT("Box Collision"));
+	CollisionComp->BodyInstance.SetCollisionProfileName("ProjectileKinetic");
+	CollisionComp->OnComponentHit.AddDynamic(this, &ASimpleBullet::OnHit);
 
+	// Players can't walk on it
+	CollisionComp->SetWalkableSlopeOverride(FWalkableSlopeOverride(WalkableSlope_Unwalkable, 0.f));
+	CollisionComp->CanCharacterStepUpOn = ECB_No;
+
+	// Set a dummy root component
+	RootComponent = CollisionComp;
+
+	//Mesh visible to player
+	VisibleMesh = CreateDefaultSubobject<UStaticMeshComponent>(TEXT("VisibleBulletMesh"));
+	VisibleMesh->AttachToComponent(CollisionComp, FAttachmentTransformRules::KeepRelativeTransform);
+	VisibleMesh->SetCollisionEnabled(ECollisionEnabled::NoCollision);
+
+	// If found, uses bullet mesh by default
+	static ConstructorHelpers::FObjectFinder<UStaticMesh> BulletMeshAsset(TEXT("StaticMesh'/Game/CustomContent/Projectiles/BulletMesh.BulletMesh'"));
+	if (BulletMeshAsset.Succeeded())
+	{
+		VisibleMesh->SetStaticMesh(BulletMeshAsset.Object);
+		VisibleMesh->AddLocalRotation(FRotator(270.f, 0.f, 0.f));
+
+		//Adjusts collision box to fit
+		FVector BulletMinBound, BulletMaxBound;
+		VisibleMesh->GetLocalBounds(BulletMinBound, BulletMaxBound);
+		FVector NewBoxDimensions = BulletMaxBound.ComponentMax(BulletMinBound.GetAbs());
+		NewBoxDimensions.Set(NewBoxDimensions.Z, NewBoxDimensions.Y, NewBoxDimensions.X);
+
+		CollisionComp->SetBoxExtent(NewBoxDimensions);
+	}
+
+	// Use a ProjectileMovementComponent to govern this projectile's movement
+	ProjectileMovement = CreateDefaultSubobject<UProjectileMovementComponent>(TEXT("ProjectileComp"));
+	ProjectileMovement->UpdatedComponent = CollisionComp;
+	ProjectileMovement->InitialSpeed = 3000.f;
+	ProjectileMovement->MaxSpeed = 3000.f;
+	ProjectileMovement->bRotationFollowsVelocity = true;
+	ProjectileMovement->bShouldBounce = true;
+
+	// Die after 3 seconds by default
+	//UPROPERTY(EditAnywhere)
+	InitialLifeSpan = 4.f;
+}
+
+void ASimpleBullet::OnHit(UPrimitiveComponent* HitComp, AActor* OtherActor, UPrimitiveComponent* OtherComp, FVector NormalImpulse, const FHitResult& Hit)
+{
+	Destroy();
+	UE_LOG(LogTemp, Warning, TEXT("Hit!"));
 }
 
 // Called when the game starts or when spawned
@@ -16,12 +67,5 @@ void ASimpleBullet::BeginPlay()
 {
 	Super::BeginPlay();
 	
-}
-
-// Called every frame
-void ASimpleBullet::Tick(float DeltaTime)
-{
-	Super::Tick(DeltaTime);
-
 }
 
