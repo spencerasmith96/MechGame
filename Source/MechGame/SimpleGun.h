@@ -10,7 +10,14 @@ UCLASS()
 class MECHGAME_API ASimpleGun : public AActor
 {
 	GENERATED_BODY()
-	
+
+public:
+	UPROPERTY(EditAnywhere)
+	float FireRate;
+
+	UPROPERTY(EditAnywhere)
+	USkeletalMeshComponent* TurretMeshComp;
+
 public:	
 	// Sets default values for this actor's properties
 	ASimpleGun();
@@ -19,8 +26,9 @@ protected:
 	// Called when the game starts or when spawned
 	virtual void BeginPlay() override;
 
-public:	
-	// Called every frame
-	virtual void Tick(float DeltaTime) override;
+protected:	
+	// Called when the weapon is fired
+	UFUNCTION(BlueprintCallable)
+	void OnFire();
 
 };

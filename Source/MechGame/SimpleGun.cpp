@@ -6,9 +6,7 @@
 // Sets default values
 ASimpleGun::ASimpleGun()
 {
- 	// Set this actor to call Tick() every frame.  You can turn this off to improve performance if you don't need it.
-	PrimaryActorTick.bCanEverTick = true;
-
+	TurretMeshComp = CreateDefaultSubobject<USkeletalMeshComponent>(TEXT("Turret Mesh"));
 }
 
 // Called when the game starts or when spawned
@@ -18,10 +16,7 @@ void ASimpleGun::BeginPlay()
 	
 }
 
-// Called every frame
-void ASimpleGun::Tick(float DeltaTime)
+void ASimpleGun::OnFire()
 {
-	Super::Tick(DeltaTime);
-
 }
 
