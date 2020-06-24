@@ -18,6 +18,15 @@ public:
 	UPROPERTY(EditAnywhere)
 	USkeletalMeshComponent* TurretMeshComp;
 
+	UPROPERTY(EditAnywhere)
+	TSubclassOf<class ASimpleBullet> ProjectileClass;
+
+	UPROPERTY(VisibleDefaultsOnly)
+	USceneComponent* MuzzleLocation;
+
+	UPROPERTY(EditAnywhere)
+	UAnimMontage* FireAnimation;
+
 public:	
 	// Sets default values for this actor's properties
 	ASimpleGun();
