@@ -11,9 +11,9 @@ ASimpleGun::ASimpleGun()
 	TurretMeshComp = CreateDefaultSubobject<USkeletalMeshComponent>(TEXT("TurretMesh"));
 	RootComponent = TurretMeshComp;
 
+	// Creates a component that'll snap to TurretMesh's "Muzzle" socket
 	MuzzleLocation = CreateDefaultSubobject<USceneComponent>(TEXT("MuzzleLocation"));
 	MuzzleLocation->SetupAttachment(TurretMeshComp, TEXT("Muzzle"));
-	
 }
 
 // Called when the game starts or when spawned
@@ -25,22 +25,13 @@ void ASimpleGun::BeginPlay()
 
 void ASimpleGun::OnFire()
 {
+	// Try to play the fire animation
 	if (FireAnimation != NULL)
 	{
-		UAnimInstance* AnimInstance = TurretMeshComp->GetAnimInstance();
-		if (AnimInstance != NULL)
-		{
-			AnimInstance->Montage_Play(FireAnimation);
-		}
-		else
-		{
-			UE_LOG(LogTemp, Warning, TEXT("Unable to find AnimInstance"));
-		}
+		TurretMeshComp->PlayAnimation(FireAnimation, false);
 	}
-	else
-	{
-		UE_LOG(LogTemp, Warning, TEXT("Unable to find FireAnimation"));
-	}
+
+	// Try to spawn the bullet
 	if (ProjectileClass != NULL)
 	{
 		UWorld* const World = GetWorld();
