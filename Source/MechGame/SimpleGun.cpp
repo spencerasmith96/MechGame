@@ -49,12 +49,10 @@ void ASimpleGun::OnFire()
 			World->SpawnActor<ASimpleBullet>(ProjectileClass, SpawnLocation, SpawnRotation);
 		}
 	}
-	FireAudioComp->Play();
-	/*// Try to play sound effect
+	// Try to play sound effect
 	if (FireSound != NULL)
 	{
 		FireAudioComp->Play();
 	}
-	*/
 }
 
