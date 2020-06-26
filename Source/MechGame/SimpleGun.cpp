@@ -3,6 +3,7 @@
 
 #include "SimpleGun.h"
 #include "SimpleBullet.h"
+#include "Components/AudioComponent.h"
 
 // Sets default values
 ASimpleGun::ASimpleGun()
@@ -14,12 +15,18 @@ ASimpleGun::ASimpleGun()
 	// Creates a component that'll snap to TurretMesh's "Muzzle" socket
 	MuzzleLocation = CreateDefaultSubobject<USceneComponent>(TEXT("MuzzleLocation"));
 	MuzzleLocation->SetupAttachment(TurretMeshComp, TEXT("Muzzle"));
+
+	// Initiliazes the audio firing of the gun
+	FireAudioComp = CreateDefaultSubobject<UAudioComponent>(TEXT("FireAudioComponent"));
+	FireAudioComp->bAutoActivate = false;
+	FireAudioComp->AttachToComponent(MuzzleLocation, FAttachmentTransformRules::KeepRelativeTransform);
 }
 
 // Called when the game starts or when spawned
 void ASimpleGun::BeginPlay()
 {
 	Super::BeginPlay();
+	FireAudioComp->SetSound(FireSound);
 	OnFire();
 }
 
@@ -42,5 +49,12 @@ void ASimpleGun::OnFire()
 			World->SpawnActor<ASimpleBullet>(ProjectileClass, SpawnLocation, SpawnRotation);
 		}
 	}
+	FireAudioComp->Play();
+	/*// Try to play sound effect
+	if (FireSound != NULL)
+	{
+		FireAudioComp->Play();
+	}
+	*/
 }
 

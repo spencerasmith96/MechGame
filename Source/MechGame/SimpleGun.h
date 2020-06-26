@@ -3,6 +3,7 @@
 #pragma once
 
 #include "CoreMinimal.h"
+#include "Sound/SoundCue.h"
 #include "GameFramework/Actor.h"
 #include "SimpleGun.generated.h"
 
@@ -26,6 +27,12 @@ public:
 
 	UPROPERTY(EditAnywhere)
 	UAnimMontage* FireAnimation;
+
+	UPROPERTY(EditAnywhere)
+	USoundCue* FireSound;
+	
+	UPROPERTY(EditAnywhere)
+	UAudioComponent* FireAudioComp;
 
 public:	
 	// Sets default values for this actor's properties
