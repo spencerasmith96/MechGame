@@ -46,12 +46,13 @@ ASimpleBullet::ASimpleBullet()
 	// Use a ProjectileMovementComponent to govern this projectile's movement
 	ProjectileMovement = CreateDefaultSubobject<UProjectileMovementComponent>(TEXT("ProjectileComp"));
 	ProjectileMovement->UpdatedComponent = CollisionComp;
-	ProjectileMovement->InitialSpeed = 3000.f;
-	ProjectileMovement->MaxSpeed = 3000.f;
+	ProjectileMovement->InitialSpeed = 5000.f;
+	ProjectileMovement->MaxSpeed = 30000.f;
 	ProjectileMovement->bRotationFollowsVelocity = true;
 	ProjectileMovement->bShouldBounce = true;
+	ProjectileMovement->ProjectileGravityScale = 0.2f;
 
-	// Die after 3 seconds by default
+	// Die after 4 seconds by default
 	//UPROPERTY(EditAnywhere)
 	InitialLifeSpan = 4.f;
 }
@@ -59,7 +60,7 @@ ASimpleBullet::ASimpleBullet()
 void ASimpleBullet::OnHit(UPrimitiveComponent* HitComp, AActor* OtherActor, UPrimitiveComponent* OtherComp, FVector NormalImpulse, const FHitResult& Hit)
 {
 	Destroy();
-	UE_LOG(LogTemp, Warning, TEXT("Hit!"));
+	UE_LOG(LogTemp, Warning, TEXT("Hit! Carrying damage: %d"), Damage);
 }
 
 // Called when the game starts or when spawned
@@ -68,4 +69,3 @@ void ASimpleBullet::BeginPlay()
 	Super::BeginPlay();
 	
 }
-

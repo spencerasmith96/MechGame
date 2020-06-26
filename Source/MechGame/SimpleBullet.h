@@ -23,6 +23,11 @@ class MECHGAME_API ASimpleBullet : public AActor
 	UPROPERTY(BlueprintReadOnly, VisibleAnywhere, Category = Movement, meta = (AllowPrivateAccess = true))
 	class UProjectileMovementComponent* ProjectileMovement;
 
+private:
+	/** Value of projectile's damage */
+	UPROPERTY(EditAnywhere)
+	int32 Damage = 1;
+
 public:	
 	// Sets default values for this actor's properties
 	ASimpleBullet();
