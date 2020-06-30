@@ -4,12 +4,21 @@
 
 #include "CoreMinimal.h"
 #include "GameFramework/Pawn.h"
+#include "SimpleGun.h"
 #include "MechArm.generated.h"
 
 UCLASS()
 class MECHGAME_API AMechArm : public APawn
 {
 	GENERATED_BODY()
+
+	UPROPERTY(EditAnywhere)
+	USkeletalMeshComponent* ArmSkeletalComp;
+
+	UPROPERTY(EditAnywhere)
+	TSubclassOf<class ASimpleGun> WeaponComp;
+
+	USceneComponent* WeaponLocation;
 
 public:
 	// Sets default values for this pawn's properties
