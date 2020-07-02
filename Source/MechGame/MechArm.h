@@ -18,6 +18,11 @@ class MECHGAME_API AMechArm : public APawn
 	UPROPERTY(EditAnywhere)
 	TSubclassOf<class ASimpleGun> WeaponComp;
 
+	/** Over shoulder camera */
+	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = Camera, meta = (AllowPrivateAccess = "true"))
+	class UCameraComponent* OverShoulderCameraComponent;
+
+	UPROPERTY(VisibleAnywhere)
 	USceneComponent* WeaponLocation;
 
 public:
@@ -34,5 +39,11 @@ public:
 
 	// Called to bind functionality to input
 	virtual void SetupPlayerInputComponent(class UInputComponent* PlayerInputComponent) override;
+
+	// Tries to fire ActiveWeapon
+	void OnFire();
+
+private: 
+	ASimpleGun* ActiveWeapon;
 
 };

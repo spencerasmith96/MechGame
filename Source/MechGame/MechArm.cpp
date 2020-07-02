@@ -2,6 +2,7 @@
 
 
 #include "MechArm.h"
+#include "Camera/CameraComponent.h"
 #include "SimpleGun.h"
 
 // Sets default values
@@ -15,6 +16,11 @@ AMechArm::AMechArm()
 
 	WeaponLocation = CreateDefaultSubobject<USceneComponent>(TEXT("WeaponLocation"));
 	WeaponLocation->AttachToComponent(ArmSkeletalComp, FAttachmentTransformRules::KeepRelativeTransform, TEXT("Weapon1"));
+
+	OverShoulderCameraComponent = CreateDefaultSubobject<UCameraComponent>(TEXT("Camera"));
+	OverShoulderCameraComponent->SetupAttachment(ArmSkeletalComp);
+	FVector CamLocation = FVector(-2400.f, 1800.f, -700.f);
+	OverShoulderCameraComponent->SetRelativeLocation(CamLocation);
 }
 
 // Called when the game starts or when spawned
@@ -22,8 +28,8 @@ void AMechArm::BeginPlay()
 {
 	Super::BeginPlay();
 
+	// Spawns the WeaponComp at the location of WeaponLocation and attaches to the socket
 	UWorld* World = GetWorld();
-	
 	if (World != NULL)
 	{
 		const FRotator SpawnRotation = WeaponLocation->GetComponentRotation();
@@ -34,6 +40,9 @@ void AMechArm::BeginPlay()
 			ASimpleGun* NewWeapon = World->SpawnActor<ASimpleGun>(WeaponComp, SpawnLocation, SpawnRotation);
 			NewWeapon->AttachToComponent(ArmSkeletalComp, FAttachmentTransformRules::KeepWorldTransform, TEXT("Weapon1"));
 
+			// Temporary!!!
+			// Sets ActiveWeapon to NewWeapon
+			ActiveWeapon = NewWeapon;
 		}
 	}
 }
@@ -49,6 +58,17 @@ void AMechArm::Tick(float DeltaTime)
 void AMechArm::SetupPlayerInputComponent(UInputComponent* PlayerInputComponent)
 {
 	Super::SetupPlayerInputComponent(PlayerInputComponent);
+	check(PlayerInputComponent);
 
+	// Bind fire event
+	PlayerInputComponent->BindAction("Fire", IE_Pressed, this, &AMechArm::OnFire);
+}
+
+void AMechArm::OnFire()
+{
+	if (ActiveWeapon != NULL)
+	{
+		ActiveWeapon->OnFire();
+	}
 }
 
