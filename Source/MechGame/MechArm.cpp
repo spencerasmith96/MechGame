@@ -32,29 +32,8 @@ void AMechArm::BeginPlay()
 	Super::BeginPlay();
 
 	// Spawns the WeaponComps at the location of WeaponLocation and attaches to the socket
-	UWorld* World = GetWorld();
-	if (World != NULL)
-	{
-		const FRotator SpawnRotation = WeaponLocation->GetComponentRotation();
-		const FVector SpawnLocation = WeaponLocation->GetComponentLocation();
-
-		if (WeaponComp1 != NULL)
-		{
-			ASimpleGun* NewWeapon = World->SpawnActor<ASimpleGun>(WeaponComp1, SpawnLocation, SpawnRotation);
-			NewWeapon->AttachToComponent(ArmSkeletalComp, FAttachmentTransformRules::SnapToTargetIncludingScale, TEXT("Weapon1"));
-
-			// Temporary!!!
-			// Sets ActiveWeapon to NewWeapon
-			ActiveWeapon = NewWeapon;
-
-		}
-
-		if (WeaponComp2 != NULL)
-		{
-			ASimpleGun* NewWeapon = World->SpawnActor<ASimpleGun>(WeaponComp2, SpawnLocation, SpawnRotation);
-			NewWeapon->AttachToComponent(ArmSkeletalComp, FAttachmentTransformRules::SnapToTargetIncludingScale, TEXT("Weapon2"));
-		}
-	}
+	AddWeapon(WeaponComp1, "Weapon1");
+	AddWeapon(WeaponComp2, "Weapon2");
 
 	ReadyFire();
 
@@ -79,6 +58,9 @@ void AMechArm::SetupPlayerInputComponent(UInputComponent* PlayerInputComponent)
 	// Bind rotation
 	PlayerInputComponent->BindAxis("Turn", this, &AMechArm::TurnRight);
 	PlayerInputComponent->BindAxis("LookUp", this, &AMechArm::LookUp);
+
+	// Bind weapon cycle
+	PlayerInputComponent->BindAction("CycleWeapons", IE_Pressed, this, &AMechArm::CycleWeapon);
 }
 
 void AMechArm::OnFire()
@@ -112,7 +94,52 @@ void AMechArm::ReadyFire()
 	}
 	if (ActiveWeapon != NULL)
 	{
-		OverShoulderCameraComponent->AttachToComponent(ActiveWeapon->GetRootComponent(), FAttachmentTransformRules::KeepWorldTransform);
+		OverShoulderCameraComponent->AttachToComponent(ActiveWeapon->GetRootComponent(), FAttachmentTransformRules::SnapToTargetNotIncludingScale);
+		FVector CamLocation = FVector(-2400.f, 0.f, 1000.f);
+		OverShoulderCameraComponent->SetRelativeLocation(CamLocation);
+	}
+}
+
+void AMechArm::CycleWeapon()
+{
+	UE_LOG(LogTemp, Warning, TEXT("Here."));
+	if (ActiveWeapon != NULL) {
+		
+		int32 index;
+		if (WeaponList.Find(ActiveWeapon, index))
+		{
+			index++;
+			if (index == WeaponList.Num()) 
+			{
+				index = 0;
+			}
+			ActiveWeapon = WeaponList[index];
+
+			ReadyFire();
+		}
+	}
+}
+
+void AMechArm::AddWeapon(TSubclassOf<ASimpleGun> NewGun, FName SocketName)
+{
+	UWorld* World = GetWorld();
+	if (World != NULL)
+	{
+		if (NewGun != NULL)
+		{
+			const FRotator SpawnRotation = WeaponLocation->GetComponentRotation();
+			const FVector SpawnLocation = WeaponLocation->GetComponentLocation();
+
+			ASimpleGun* NewWeapon = World->SpawnActor<ASimpleGun>(NewGun, SpawnLocation, SpawnRotation);
+			NewWeapon->AttachToComponent(ArmSkeletalComp, FAttachmentTransformRules::SnapToTargetIncludingScale, SocketName);
+
+			WeaponList.Add(NewWeapon);
+
+			if (ActiveWeapon == NULL)
+			{
+				ActiveWeapon = NewWeapon;
+			}
+		}
 	}
 }
 

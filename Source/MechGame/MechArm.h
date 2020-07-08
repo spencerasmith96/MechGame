@@ -58,7 +58,15 @@ public:
 	// Readies the arm for firing
 	void ReadyFire();
 
+	// Changes active weapon
+	void CycleWeapon();
+
+private:
+	// Adds weapon to the appropriate socket
+	void AddWeapon(TSubclassOf<ASimpleGun> NewGun, FName SocketName);
+
 private: 
 	ASimpleGun* ActiveWeapon;
 
+	TArray<ASimpleGun*> WeaponList;
 };
