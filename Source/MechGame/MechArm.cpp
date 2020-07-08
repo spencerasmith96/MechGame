@@ -95,7 +95,7 @@ void AMechArm::ReadyFire()
 	if (ActiveWeapon != NULL)
 	{
 		OverShoulderCameraComponent->AttachToComponent(ActiveWeapon->GetRootComponent(), FAttachmentTransformRules::SnapToTargetNotIncludingScale);
-		FVector CamLocation = FVector(-2400.f, 0.f, 1000.f);
+		FVector CamLocation = FVector(-2400.f, 500.f, 1200.f);
 		OverShoulderCameraComponent->SetRelativeLocation(CamLocation);
 	}
 }
