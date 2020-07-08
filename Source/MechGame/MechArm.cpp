@@ -41,16 +41,18 @@ void AMechArm::BeginPlay()
 		if (WeaponComp1 != NULL)
 		{
 			ASimpleGun* NewWeapon = World->SpawnActor<ASimpleGun>(WeaponComp1, SpawnLocation, SpawnRotation);
-			NewWeapon->AttachToComponent(ArmSkeletalComp, FAttachmentTransformRules::KeepWorldTransform, TEXT("Weapon1"));
+			NewWeapon->AttachToComponent(ArmSkeletalComp, FAttachmentTransformRules::SnapToTargetIncludingScale, TEXT("Weapon1"));
 
 			// Temporary!!!
 			// Sets ActiveWeapon to NewWeapon
 			ActiveWeapon = NewWeapon;
+
 		}
 
 		if (WeaponComp2 != NULL)
 		{
 			ASimpleGun* NewWeapon = World->SpawnActor<ASimpleGun>(WeaponComp2, SpawnLocation, SpawnRotation);
+			NewWeapon->AttachToComponent(ArmSkeletalComp, FAttachmentTransformRules::SnapToTargetIncludingScale, TEXT("Weapon2"));
 		}
 	}
 
@@ -89,8 +91,11 @@ void AMechArm::OnFire()
 
 void AMechArm::TurnRight(float Val)
 {
-	FRotator RotateOffset = FRotator(0.f, Val, 0.f);
-	ActiveWeapon->GetRootComponent()->AddLocalRotation(RotateOffset);
+	if (ActiveWeapon != NULL)
+	{
+		FRotator RotateOffset = FRotator(0.f, Val, 0.f);
+		ActiveWeapon->GetRootComponent()->AddLocalRotation(RotateOffset);
+	}
 }
 
 void AMechArm::LookUp(float Val)
