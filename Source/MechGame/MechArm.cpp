@@ -17,19 +17,21 @@ AMechArm::AMechArm()
 
 	// Setup scene component for weapon location
 	WeaponLocation = CreateDefaultSubobject<USceneComponent>(TEXT("WeaponLocation"));
-	WeaponLocation->AttachToComponent(ArmSkeletalComp, FAttachmentTransformRules::KeepRelativeTransform, TEXT("Weapon1"));
+	WeaponLocation->AttachToComponent(ArmSkeletalComp, FAttachmentTransformRules::KeepRelativeTransform);
 
 	// Setup CameraComponent
 	OverShoulderCameraComponent = CreateDefaultSubobject<UCameraComponent>(TEXT("Camera"));
-	OverShoulderCameraComponent->SetupAttachment(ArmSkeletalComp);
-	FVector CamLocation = FVector(-2400.f, 1800.f, -700.f);
-	OverShoulderCameraComponent->SetRelativeLocation(CamLocation);
+	OverShoulderCameraComponent->SetupAttachment(WeaponLocation);
+	//FVector CamLocation = FVector(-2400.f, 1800.f, -700.f);
+	//OverShoulderCameraComponent->SetRelativeLocation(CamLocation);
 }
 
 // Called when the game starts or when spawned
 void AMechArm::BeginPlay()
 {
 	Super::BeginPlay();
+
+	WeaponLocation->SetWorldLocation(ArmSkeletalComp->GetSocketLocation(TEXT("Weapon1")));
 
 	// Spawns the WeaponComps at the location of WeaponLocation and attaches to the socket
 	AddWeapon(WeaponComp1, "Weapon1");
@@ -43,7 +45,6 @@ void AMechArm::BeginPlay()
 void AMechArm::Tick(float DeltaTime)
 {
 	Super::Tick(DeltaTime);
-
 }
 
 // Called to bind functionality to input
@@ -77,32 +78,45 @@ void AMechArm::TurnRight(float Val)
 	{
 		FRotator RotateOffset = FRotator(0.f, Val, 0.f);
 		ActiveWeapon->GetRootComponent()->AddLocalRotation(RotateOffset);
+		WeaponLocation->AddLocalRotation(RotateOffset);
 	}
 }
 
 void AMechArm::LookUp(float Val)
 {
 	FRotator RotateOffset = FRotator(Val, 0.f, 0.f);
+	FHitResult SweepHitResult;
+	
 	ArmSkeletalComp->AddLocalRotation(RotateOffset);
 }
 
 void AMechArm::ReadyFire()
-{
+{	
+	/*
 	if (ReadyFireAnim != NULL)
 	{
-		ArmSkeletalComp->PlayAnimation(ReadyFireAnim, false);
+		//ArmSkeletalComp->PlayAnimation(ReadyFireAnim, false);
 	}
+	*/
+	
+	if (ArmPoseAsset != NULL)
+	{
+		//ArmSkeletalComp->SetAnimationMode(EAnimationMode::AnimationBlueprint);
+		//ArmSkeletalComp->SetAnimInstanceClass(ArmPoseAsset->GetBlueprintClass());
+		
+	}
+	
 	if (ActiveWeapon != NULL)
 	{
-		OverShoulderCameraComponent->AttachToComponent(ActiveWeapon->GetRootComponent(), FAttachmentTransformRules::SnapToTargetNotIncludingScale);
-		FVector CamLocation = FVector(-2400.f, 500.f, 1200.f);
-		OverShoulderCameraComponent->SetRelativeLocation(CamLocation);
+		//OverShoulderCameraComponent->AttachToComponent(WeaponLocation, FAttachmentTransformRules::SnapToTargetNotIncludingScale);
+		//FVector CamLocation = FVector(-2400.f, 500.f, 1200.f);
+		//OverShoulderCameraComponent->SetRelativeLocation(CamLocation);
 	}
+	
 }
 
 void AMechArm::CycleWeapon()
 {
-	UE_LOG(LogTemp, Warning, TEXT("Here."));
 	if (ActiveWeapon != NULL) {
 		
 		int32 index;
@@ -114,10 +128,15 @@ void AMechArm::CycleWeapon()
 				index = 0;
 			}
 			ActiveWeapon = WeaponList[index];
-
-			ReadyFire();
+			ActiveWeaponSlot = index + 1;
+			
 		}
 	}
+}
+
+int32 AMechArm::GetActiveWeaponSlot()
+{
+	return ActiveWeaponSlot;
 }
 
 void AMechArm::AddWeapon(TSubclassOf<ASimpleGun> NewGun, FName SocketName)

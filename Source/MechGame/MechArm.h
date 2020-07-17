@@ -21,6 +21,9 @@ class MECHGAME_API AMechArm : public APawn
 	UPROPERTY(EditAnywhere)
 	TSubclassOf<class ASimpleGun> WeaponComp2;
 
+	UPROPERTY(EditAnywhere)
+	UAnimBlueprint* ArmPoseAsset;
+
 	/** Over shoulder camera */
 	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = Camera, meta = (AllowPrivateAccess = "true"))
 	class UCameraComponent* OverShoulderCameraComponent;
@@ -61,12 +64,17 @@ public:
 	// Changes active weapon
 	void CycleWeapon();
 
+	UFUNCTION(BlueprintCallable, Category = "MechArm")
+	int32 GetActiveWeaponSlot();
+
 private:
 	// Adds weapon to the appropriate socket
 	void AddWeapon(TSubclassOf<ASimpleGun> NewGun, FName SocketName);
 
 private: 
 	ASimpleGun* ActiveWeapon;
+
+	int32 ActiveWeaponSlot = 0;
 
 	TArray<ASimpleGun*> WeaponList;
 };
