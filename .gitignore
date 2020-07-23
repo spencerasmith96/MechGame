@@ -16,3 +16,4 @@ Saved
 *.uproject
 *.uasset
 *.umap
+/enc_temp_folder
