@@ -31,13 +31,13 @@ void AMechArm::BeginPlay()
 
 	ActiveWeaponSlot = 0;
 
+	// Initiliaze the camera offset
 	FVector CamLocation = FVector(-1000.f, 500.f, 500.f);
 	OverShoulderCameraComponent->SetRelativeLocation(CamLocation);
 
 	// Spawns the WeaponComps at the location of WeaponLocation and attaches to the socket
 	AddWeapon(WeaponComp1, "Weapon1");
 	AddWeapon(WeaponComp2, "Weapon2");
-
 }
 
 // Called every frame
@@ -83,9 +83,8 @@ void AMechArm::TurnRight(float Val)
 void AMechArm::LookUp(float Val)
 {
 	FRotator RotateOffset = FRotator(Val, 0.f, 0.f);
-	FHitResult SweepHitResult;
-	
-	ArmSkeletalComp->AddLocalRotation(RotateOffset);
+
+	AddActorLocalRotation(RotateOffset, true);
 }
 
 void AMechArm::CycleWeapon()
@@ -155,4 +154,3 @@ void AMechArm::AddWeapon(TSubclassOf<ASimpleGun> NewGun, FName SocketName)
 		}
 	}
 }
-
