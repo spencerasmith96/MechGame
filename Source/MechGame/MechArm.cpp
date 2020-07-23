@@ -115,6 +115,7 @@ bool AMechArm::CycleToWeapon(int32 index)
 		{
 			ActiveWeapon = WeaponList[index];
 			ActiveWeaponSlot = index + 1;
+			return true;
 		}
 		else
 		{
