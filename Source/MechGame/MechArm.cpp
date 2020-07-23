@@ -29,7 +29,9 @@ void AMechArm::BeginPlay()
 {
 	Super::BeginPlay();
 
-	FVector CamLocation = FVector(-2000.f, 2000.f, 350.f);
+	ActiveWeaponSlot = 0;
+
+	FVector CamLocation = FVector(-1000.f, 500.f, 500.f);
 	OverShoulderCameraComponent->SetRelativeLocation(CamLocation);
 
 	// Spawns the WeaponComps at the location of WeaponLocation and attaches to the socket

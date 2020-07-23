@@ -15,24 +15,18 @@ class MECHGAME_API AMechArm : public APawn
 	UPROPERTY(EditAnywhere)
 	USkeletalMeshComponent* ArmSkeletalComp;
 
-	UPROPERTY(EditAnywhere)
+	UPROPERTY(EditAnywhere, Category = "Weapons")
 	TSubclassOf<class ASimpleGun> WeaponComp1;
 
-	UPROPERTY(EditAnywhere)
+	UPROPERTY(EditAnywhere, Category = "Weapons")
 	TSubclassOf<class ASimpleGun> WeaponComp2;
 
-	UPROPERTY(EditAnywhere)
-	UAnimBlueprint* ArmPoseAsset;
-
 	/** Over shoulder camera */
-	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = Camera, meta = (AllowPrivateAccess = "true"))
+	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = "Camera", meta = (AllowPrivateAccess = "true"))
 	class UCameraComponent* OverShoulderCameraComponent;
 
-	UPROPERTY(VisibleAnywhere)
+	UPROPERTY(VisibleAnywhere, Category = "Camera")
 	USceneComponent* WeaponLocation;
-
-	UPROPERTY(EditAnywhere)
-	UAnimationAsset* ReadyFireAnim;
 
 public:
 	// Sets default values for this pawn's properties
