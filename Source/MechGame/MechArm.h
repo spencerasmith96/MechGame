@@ -58,9 +58,6 @@ public:
 	// Turn arm Up/Down
 	void LookUp(float Val);
 
-	// Readies the arm for firing
-	void ReadyFire();
-
 	// Changes active weapon
 	void CycleWeapon();
 

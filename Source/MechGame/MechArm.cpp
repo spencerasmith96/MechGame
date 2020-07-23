@@ -37,8 +37,6 @@ void AMechArm::BeginPlay()
 	AddWeapon(WeaponComp1, "Weapon1");
 	AddWeapon(WeaponComp2, "Weapon2");
 
-	ReadyFire();
-
 }
 
 // Called every frame
@@ -88,31 +86,6 @@ void AMechArm::LookUp(float Val)
 	FHitResult SweepHitResult;
 	
 	ArmSkeletalComp->AddLocalRotation(RotateOffset);
-}
-
-void AMechArm::ReadyFire()
-{	
-	/*
-	if (ReadyFireAnim != NULL)
-	{
-		//ArmSkeletalComp->PlayAnimation(ReadyFireAnim, false);
-	}
-	*/
-	
-	if (ArmPoseAsset != NULL)
-	{
-		//ArmSkeletalComp->SetAnimationMode(EAnimationMode::AnimationBlueprint);
-		//ArmSkeletalComp->SetAnimInstanceClass(ArmPoseAsset->GetBlueprintClass());
-		
-	}
-	
-	if (ActiveWeapon != NULL)
-	{
-		//OverShoulderCameraComponent->AttachToComponent(WeaponLocation, FAttachmentTransformRules::SnapToTargetNotIncludingScale);
-		//FVector CamLocation = FVector(-2400.f, 500.f, 1200.f);
-		//OverShoulderCameraComponent->SetRelativeLocation(CamLocation);
-	}
-	
 }
 
 void AMechArm::CycleWeapon()
