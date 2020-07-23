@@ -58,9 +58,13 @@ public:
 	// Turn arm Up/Down
 	void LookUp(float Val);
 
-	// Changes active weapon
+	// Changes to next active weapon
 	void CycleWeapon();
 
+	// Changes to the weapon at the index, false if failed
+	bool CycleToWeapon(int32 index);
+
+	// Returns the active weapon as index
 	UFUNCTION(BlueprintCallable, Category = "MechArm")
 	int32 GetActiveWeaponSlot();
 

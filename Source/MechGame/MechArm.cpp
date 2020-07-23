@@ -100,10 +100,31 @@ void AMechArm::CycleWeapon()
 			{
 				index = 0;
 			}
-			ActiveWeapon = WeaponList[index];
-			ActiveWeaponSlot = index + 1;
+			
+			CycleToWeapon(index);
 			
 		}
+	}
+}
+
+bool AMechArm::CycleToWeapon(int32 index)
+{
+	if (WeaponList.IsValidIndex(index))
+	{
+		if (WeaponList[index] != nullptr)
+		{
+			ActiveWeapon = WeaponList[index];
+			ActiveWeaponSlot = index + 1;
+		}
+		else
+		{
+			return false;
+		}
+	}
+
+	else
+	{
+		return false;
 	}
 }
 
