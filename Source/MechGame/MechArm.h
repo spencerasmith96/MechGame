@@ -58,7 +58,7 @@ public:
 	// Turn arm Up/Down
 	void LookUp(float Val);
 
-	// Changes to next active weapon
+	// Changes to next active weapon, debugging purposes.
 	void CycleWeapon();
 
 	// Changes to the weapon at the index, false if failed

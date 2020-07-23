@@ -21,9 +21,7 @@ AMechArm::AMechArm()
 
 	// Setup CameraComponent
 	OverShoulderCameraComponent = CreateDefaultSubobject<UCameraComponent>(TEXT("Camera"));
-	OverShoulderCameraComponent->SetupAttachment(WeaponLocation);
-	//FVector CamLocation = FVector(-2400.f, 1800.f, -700.f);
-	//OverShoulderCameraComponent->SetRelativeLocation(CamLocation);
+	OverShoulderCameraComponent->AttachToComponent(WeaponLocation, FAttachmentTransformRules::KeepRelativeTransform);
 }
 
 // Called when the game starts or when spawned
@@ -31,7 +29,8 @@ void AMechArm::BeginPlay()
 {
 	Super::BeginPlay();
 
-	WeaponLocation->SetWorldLocation(ArmSkeletalComp->GetSocketLocation(TEXT("Weapon1")));
+	FVector CamLocation = FVector(-2000.f, 2000.f, 350.f);
+	OverShoulderCameraComponent->SetRelativeLocation(CamLocation);
 
 	// Spawns the WeaponComps at the location of WeaponLocation and attaches to the socket
 	AddWeapon(WeaponComp1, "Weapon1");
@@ -76,7 +75,6 @@ void AMechArm::TurnRight(float Val)
 	{
 		FRotator RotateOffset = FRotator(0.f, Val, 0.f);
 		ActiveWeapon->GetRootComponent()->AddLocalRotation(RotateOffset);
-		WeaponLocation->AddLocalRotation(RotateOffset);
 	}
 }
 
@@ -102,8 +100,11 @@ void AMechArm::CycleWeapon()
 			}
 			
 			CycleToWeapon(index);
-			
 		}
+	}
+	else
+	{
+		CycleToWeapon(0);
 	}
 }
 
@@ -115,6 +116,8 @@ bool AMechArm::CycleToWeapon(int32 index)
 		{
 			ActiveWeapon = WeaponList[index];
 			ActiveWeaponSlot = index + 1;
+
+			WeaponLocation->AttachToComponent(ActiveWeapon->GetRootComponent(), FAttachmentTransformRules::KeepRelativeTransform);
 			return true;
 		}
 		else
@@ -122,7 +125,6 @@ bool AMechArm::CycleToWeapon(int32 index)
 			return false;
 		}
 	}
-
 	else
 	{
 		return false;
@@ -148,11 +150,6 @@ void AMechArm::AddWeapon(TSubclassOf<ASimpleGun> NewGun, FName SocketName)
 			NewWeapon->AttachToComponent(ArmSkeletalComp, FAttachmentTransformRules::SnapToTargetIncludingScale, SocketName);
 
 			WeaponList.Add(NewWeapon);
-
-			if (ActiveWeapon == NULL)
-			{
-				ActiveWeapon = NewWeapon;
-			}
 		}
 	}
 }
